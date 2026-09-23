@@ -1,0 +1,18 @@
+# nav_self 导航系统依赖清单（效仿 SMBU-PolarBear-Robotics-Team 的 vcstool 管理模式）
+# 使用方式：
+#   cd nav_ws
+#   vcs import --recursive . < dependencies.repos
+#   rosdep install -r --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
+#   colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+
+repositories:
+  pb2025_sentry_nav:
+    type: git
+    url: https://github.com/SMBU-PolarBear-Robotics-Team/pb2025_sentry_nav
+    version: main
+    # 内部按功能层顺序平铺：01_驱动 02_里程计 03_坐标变换 04_感知 05_激光转scan 06_定位 07_控制器 08_描述 09_bringup
+  car:
+    type: git
+    url: https://github.com/destiny-DDD/car.git
+    version: main
+    # NUC 与电控串口通信桥：01_libxr 02_car
