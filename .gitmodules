@@ -1,3 +1,0 @@
-[submodule "ros2_libxr"]
-	path = ros2_libxr
-	url = https://github.com/xunynux/ros2_libxr.git
