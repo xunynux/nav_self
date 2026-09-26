@@ -7,12 +7,50 @@
 
 ## 🚀 快速启动
 
+### 0. 克隆到新机器（NUC）
+
+```bash
+git clone https://github.com/xunynux/nav_self.git
+cd nav_self/nav_ws
+```
+
+三个必踩的坑：
+
+**① livox 的 `package.xml` 不在仓库里**
+
+上游 `.gitignore` 忽略了它（正常流程由 `build.sh` 生成），克隆后必须先生成，否则 `livox_ros_driver2` 配置阶段必失败：
+
+```bash
+cp src/pb2025_sentry_nav/01_livox_ros_driver2/package_ROS2.xml \
+   src/pb2025_sentry_nav/01_livox_ros_driver2/package.xml
+```
+
+**② Livox-SDK2 必须装在 `/usr/local`**
+
+该 CMakeLists 用的是 `find_library(... /usr/local/lib REQUIRED)`，找的是系统安装的 SDK，**不是**仓库里那个被 gitignore 的 `Livox-SDK2/` 目录。装完自检：
+
+```bash
+ls /usr/local/lib/liblivox_lidar_sdk_shared.so /usr/local/include/livox_lidar_api.h
+```
+
+**③ 首次构建要带 distro 参数**
+
+本机实际是 **ROS 2 Jazzy**（文档里旧写的 humble 已过时）：
+
+```bash
+colcon build --cmake-args -DROS_EDITION=ROS2 -DDISTRO_ROS=jazzy
+```
+
+之后再编 colcon 会复用 CMake 缓存里的这两个变量，普通 `colcon build` 即可。
+
+> 重定位用的先验点云 `rmul_2024.pcd`（62MB）和 2D 图已进仓库，NUC 上 `git pull` 就有，不用另外拷。
+
 ### 1. 编译工作空间
 
 ```bash
 cd /home/xuny/nav_self/nav_ws
-source /opt/ros/humble/setup.bash
-colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+source /opt/ros/jazzy/setup.bash
+colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DROS_EDITION=ROS2 -DDISTRO_ROS=jazzy
 source install/setup.bash
 ```
 

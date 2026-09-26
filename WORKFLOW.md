@@ -175,7 +175,7 @@ ros2 launch pb2025_nav_bringup slam_launch.py \
 **方法A：使用键盘控制（测试用）**
 ```bash
 # 新终端：安装并启动键盘控制
-sudo apt install ros-humble-teleop-twist-keyboard
+sudo apt install ros-jazzy-teleop-twist-keyboard
 ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap /cmd_vel:=/cmd_vel
 ```
 
@@ -405,7 +405,7 @@ ros2 topic pub --once /goal_pose geometry_msgs/msg/PoseStamped \
 **方法3：使用Nav2 Action（推荐）**
 ```bash
 # 安装Nav2工具
-sudo apt install ros-humble-nav2-simple-commander
+sudo apt install ros-jazzy-nav2-simple-commander
 
 # Python脚本发送导航目标
 python3 << 'EOF'
