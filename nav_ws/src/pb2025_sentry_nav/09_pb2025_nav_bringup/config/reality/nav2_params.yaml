@@ -5,7 +5,7 @@ livox_ros_driver2:
     data_src: 0                                         # 0-lidar, others-Invalid data src
     publish_freq: 20.0                                  # frequency of publish, 5.0, 10.0, 20.0, 50.0, etc.
     output_data_type: 0
-    frame_id: livox_frame
+    frame_id: aft_mapped
     user_config_path: $(find-pkg-share pb2025_nav_bringup)/config/reality/mid360_user_config.json
     cmdline_input_bd_code: livox0000000001
     lvx_file_path: ""
@@ -64,8 +64,8 @@ point_lio:
       plane_thr: 0.1                                    # 0.05, the threshold for plane criteria, the smaller, the flatter a plane
       match_s: 81.0
       ivox_grid_resolution: 0.5
-      gravity: [0.0, 0.5305473804473877, -0.8383715748786926]            # gravity to be aligned
-      gravity_init: [0.0, 0.5305473804473877, -0.8383715748786926]       # preknown gravity in the first IMU body frame, use when imu_en is False or start from a non-stationary state
+      gravity: [0.7071068, 0.0, -0.7071068]                              # gravity to be aligned (360 自带 IMU 系，对应 URDF 45° pitch，静止时 = -mean_acc)
+      gravity_init: [0.7071068, 0.0, -0.7071068]                         # preknown gravity in the first IMU body frame, use when imu_en is False or start from a non-stationary state
       extrinsic_T: [ -0.011, -0.02329, 0.04412 ]
       extrinsic_R: [ 1.0, 0.0, 0.0,
                      0.0, 1.0, 0.0,
@@ -92,12 +92,12 @@ loam_interface:
     registered_scan_topic: "cloud_registered"
     odom_frame: "odom"
     base_frame: "base_footprint"
-    lidar_frame: "livox_frame"
+    lidar_frame: "aft_mapped"
 
 sensor_scan_generation:
   ros__parameters:
     use_sim_time: False
-    lidar_frame: "livox_frame"
+    lidar_frame: "aft_mapped"
     base_frame: "base_footprint"
     robot_base_frame: "base_footprint"
 
@@ -106,14 +106,14 @@ small_gicp_relocalization:
     use_sim_time: False
     num_threads: 4
     num_neighbors: 20
-    global_leaf_size: 0.1
-    registered_leaf_size: 0.05
+    global_leaf_size: 0.25
+    registered_leaf_size: 0.25
     max_dist_sq: 3.0
     map_frame: "map"
     odom_frame: "odom"
     base_frame: "base_footprint"
     robot_base_frame: "base_footprint"
-    lidar_frame: "livox_frame"
+    lidar_frame: "aft_mapped"
     init_pose: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]   # [x, y, z, roll, pitch, yaw]
     # The prior_pcd_file does not need to be specified since it going to be set by defaults in launch.
     # prior_pcd_file: ""
@@ -272,8 +272,8 @@ controller_server:
       use_rotate_to_heading_treshold: 0.1
       min_approach_linear_velocity: 0.5
       approach_velocity_scaling_dist: 1.0
-      v_linear_min: -2.5
-      v_linear_max: 2.5
+      v_linear_min: -0.5
+      v_linear_max: 0.5
       v_angular_min: -3.0
       v_angular_max: 3.0
       curvature_min: 0.4                                # 低曲率阈值，低于此值不减速。
@@ -317,10 +317,10 @@ local_costmap:
           # '<robot_namespace>' keyword shall be replaced with 'namespace' where user defined.
           # It doesn't need to start with '/'
           topic: <robot_namespace>/sensor_scan
-          sensor_frame: livox_frame
-          min_obstacle_height: 0.0
+          sensor_frame: aft_mapped
+          min_obstacle_height: 0.10
           max_obstacle_height: 2.0
-          obstacle_max_range: 5.0
+          obstacle_max_range: 3.0
           raytrace_max_range: 5.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -328,7 +328,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 4.0
-        inflation_radius: 0.7
+        inflation_radius: 0.1
       always_send_full_costmap: False
 
 global_costmap:
@@ -363,10 +363,10 @@ global_costmap:
           # '<robot_namespace>' keyword shall be replaced with 'namespace' where user defined.
           # It doesn't need to start with '/'
           topic: <robot_namespace>/sensor_scan
-          sensor_frame: livox_frame
-          min_obstacle_height: 0.0
+          sensor_frame: aft_mapped
+          min_obstacle_height: 0.10
           max_obstacle_height: 2.0
-          obstacle_max_range: 10.0
+          obstacle_max_range: 3.0
           raytrace_max_range: 10.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -374,7 +374,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 4.0
-        inflation_radius: 0.7
+        inflation_radius: 0.1
       always_send_full_costmap: False
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.

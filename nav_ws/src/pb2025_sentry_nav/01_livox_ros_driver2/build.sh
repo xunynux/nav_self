@@ -62,7 +62,8 @@ if [ $ROS_VERSION = ${VERSION_ROS1} ]; then
     catkin_make -DROS_EDITION=${VERSION_ROS1}
 elif [ $ROS_VERSION = ${VERSION_ROS2} ]; then
     cd ../../
-    colcon build --symlink-install --cmake-args -DROS_EDITION=${VERSION_ROS2} -DDISTRO_ROS=${ROS_DISTRO}
+    colcon build --symlink-install --packages-select 01_livox_ros_driver2 \
+    --cmake-args -DROS_EDITION=${VERSION_ROS2} -DDISTRO_ROS=${ROS_DISTRO}
 fi
 popd > /dev/null
 
